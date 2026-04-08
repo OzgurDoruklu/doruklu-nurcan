@@ -21,6 +21,7 @@
 
     <script type="module">
         import { supabase } from 'https://cdn.doruklu.com/supabase-config.js';
+        import { ui as globalUI } from 'https://cdn.doruklu.com/ui.js';
 
         async function init() {
             const { data: { session } } = await supabase.auth.getSession();
@@ -47,6 +48,11 @@
             }
 
             document.getElementById('app-content').style.display = 'block';
+            
+            globalUI.renderUserBadge(session.user, profile, async () => {
+                await supabase.auth.signOut();
+                window.location.href = 'https://doruklu.com';
+            });
             
             document.getElementById('logout-btn').addEventListener('click', () => {
                 window.location.href = 'https://doruklu.com';
