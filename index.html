@@ -24,13 +24,24 @@
         import { ui as globalUI } from 'https://cdn.doruklu.com/ui.js';
 
         async function init() {
+            supabase.auth.onAuthStateChange(async (event, session) => {
+                if (event === 'SIGNED_IN' && session) {
+                    await handleLogin(session);
+                }
+            });
+
             const { data: { session } } = await supabase.auth.getSession();
             
-            if (!session) {
-                window.location.href = 'https://doruklu.com/?redirect_to=' + encodeURIComponent(window.location.href);
-                return;
+            if (session) {
+                await handleLogin(session);
+            } else {
+                if (!window.location.hash.includes('access_token')) {
+                    window.location.href = 'https://doruklu.com/?redirect_to=' + encodeURIComponent(window.location.href);
+                }
             }
+        }
 
+        async function handleLogin(session) {
             const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
             const perms = profile?.permissions || {};
             const hasAccess = profile?.role === 'super_admin' || perms['nurcan_app'] === true;
