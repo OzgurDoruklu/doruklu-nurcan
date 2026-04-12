@@ -3,36 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nurcan Doruklu</title>
-    <meta name="description" content="Nurcan Doruklu Uygulaması">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>Nurcan Doruklu - Uygulama</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.doruklu.com/style.css">
+    <style>body { padding-top: 80px; }</style>
 </head>
-<body style="margin: 0; background: linear-gradient(135deg, #4a044e 0%, #000 100%); font-family: 'Outfit', sans-serif;">
+<body>
     <div id="loading-spinner" class="loading-overlay"><div class="spinner"></div></div>
 
-    <!-- APP EKRANI -->
-    <div class="container" id="app-content" style="display:none; color:white; text-align:center; padding-top:100px;">
-        <h1 style="color:#d946ef">Nurcan Doruklu</h1>
-        <p>SSO ile başarıyla giriş yapıldı! Nurcan'ın uygulaması burada şekillenecektir.</p>
-        <button id="logout-btn" style="padding:10px 20px; background:#d946ef; border:none; color:white; border-radius:10px; cursor:pointer; margin-top:20px;">Merkezi Sisteme Dön</button>
+    <div id="dashboard-screen" class="screen">
+        <div class="dashboard-content" style="text-align:center; padding-top:100px;">
+            <div style="background:rgba(217, 70, 239, 0.05); padding: 50px; border-radius: 20px; border:1px solid rgba(217, 70, 239, 0.2);">
+                <h1 style="color:#d946ef; font-size:3rem; margin-bottom:1rem;">Nurcan'ın Alanı</h1>
+                <p style="color:var(--text-secondary); font-size:1.2rem;">Bu uygulama şu an geliştirme aşamasındadır.</p>
+                <div style="margin-top:2rem; font-size:0.9rem; color:rgba(255,255,255,0.4);">Hub üzerinden erişim sağladınız.</div>
+            </div>
+        </div>
     </div>
 
-    <script type="module">
-        import { supabase } from 'https://cdn.doruklu.com/supabase-config.js';
-        import { initSubdomainAuth } from 'https://cdn.doruklu.com/auth.js';
-
-        document.addEventListener('DOMContentLoaded', () => {
-            initSubdomainAuth('nurcan_app', (user, profile) => {
-                // Login + yetki başarılı
-                document.getElementById('app-content').style.display = 'block';
-                
-                // "Merkezi Sisteme Dön" — sadece yönlendir, signOut yapma
-                document.getElementById('logout-btn').addEventListener('click', () => {
-                    window.location.href = 'https://doruklu.com';
-                });
-            });
-        });
-    </script>
+    <script type="module" src="./js/auth.js"></script>
 </body>
 </html>
