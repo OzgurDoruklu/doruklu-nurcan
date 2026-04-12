@@ -9,8 +9,7 @@
     <link rel="stylesheet" href="https://cdn.doruklu.com/style.css">
 </head>
 <body style="margin: 0; background: linear-gradient(135deg, #4a044e 0%, #000 100%); font-family: 'Outfit', sans-serif;">
-    <div id="loading-spinner" style="display:flex; position:fixed; inset:0; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; z-index:999; color:white;">Yükleniyor...</div>
-
+    <div id="loading-spinner" class="loading-overlay"><div class="spinner"></div></div>
 
     <!-- APP EKRANI -->
     <div class="container" id="app-content" style="display:none; color:white; text-align:center; padding-top:100px;">
@@ -21,59 +20,19 @@
 
     <script type="module">
         import { supabase } from 'https://cdn.doruklu.com/supabase-config.js';
-        import { ui as globalUI } from 'https://cdn.doruklu.com/ui.js';
+        import { initSubdomainAuth } from 'https://cdn.doruklu.com/auth.js';
 
-        async function init() {
-            supabase.auth.onAuthStateChange(async (event, session) => {
-                if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
-                    await handleLogin(session);
-                }
+        document.addEventListener('DOMContentLoaded', () => {
+            initSubdomainAuth('nurcan_app', (user, profile) => {
+                // Login + yetki başarılı
+                document.getElementById('app-content').style.display = 'block';
+                
+                document.getElementById('logout-btn').addEventListener('click', async () => {
+                    await supabase.auth.signOut();
+                    window.location.href = 'https://doruklu.com';
+                });
             });
-
-            const { data: { session } } = await supabase.auth.getSession();
-            
-            if (session) {
-                await handleLogin(session);
-            } else {
-                if (!window.location.hash.includes('access_token')) {
-                    window.location.href = 'https://doruklu.com/?redirect_to=' + encodeURIComponent(window.location.href);
-                }
-            }
-        }
-
-        let _isLoggedIn = false;
-        async function handleLogin(session) {
-            if (_isLoggedIn) return;
-            _isLoggedIn = true;
-            const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-            const perms = profile?.permissions || {};
-            const hasAccess = profile?.role === 'super_admin' || perms['nurcan_app'] === true;
-
-            document.getElementById('loading-spinner').style.display = 'none';
-
-            if (!hasAccess) {
-                document.body.innerHTML = `
-                <div style="color:white; text-align:center; padding:50px; font-family:'Outfit'">
-                    <h2 style="color:#f87171">Yetkiniz Reddedildi</h2>
-                    <p>Bu uygulamaya girmek için yetkiniz yok.</p>
-                    <a href="https://doruklu.com" style="color:#d946ef; text-decoration:none;">Merkezi Sisteme Dön</a>
-                </div>`;
-                return;
-            }
-
-            document.getElementById('app-content').style.display = 'block';
-            
-            globalUI.renderUserBadge(session.user, profile, async () => {
-                await supabase.auth.signOut();
-                window.location.href = 'https://doruklu.com';
-            });
-            
-            document.getElementById('logout-btn').addEventListener('click', () => {
-                window.location.href = 'https://doruklu.com';
-            });
-        }
-        
-        document.addEventListener('DOMContentLoaded', init);
+        });
     </script>
 </body>
 </html>
