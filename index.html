@@ -27,8 +27,8 @@
                 // Login + yetki başarılı
                 document.getElementById('app-content').style.display = 'block';
                 
-                document.getElementById('logout-btn').addEventListener('click', async () => {
-                    await supabase.auth.signOut();
+                // "Merkezi Sisteme Dön" — sadece yönlendir, signOut yapma
+                document.getElementById('logout-btn').addEventListener('click', () => {
                     window.location.href = 'https://doruklu.com';
                 });
             });
